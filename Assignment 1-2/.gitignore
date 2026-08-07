@@ -1,0 +1,12 @@
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.DS_Store
+
+# SQLite database files
+tasks.db
+tasks.db-journal
+tasks.db-wal
+tasks.db-shm
