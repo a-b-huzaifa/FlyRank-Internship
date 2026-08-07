@@ -13,7 +13,7 @@ This repository contains tasks and assignments completed during the FlyRank Inte
 
 ### How to Run Assignments
 
-The source code for both assignments resides in the **`Assignment 1-2`** directory (with Assignment 2 representing the persistent database version of the API).
+The source code for both assignments resides in the **`Assignment 1-2`** directory on the `main` branch (with Assignment 2 representing the persistent database version of the API).
 
 To run the application:
 1. Open your terminal in the [Assignment 1-2](./Assignment%201-2) folder.
@@ -26,3 +26,39 @@ To run the application:
    npm start
    ```
 4. Access the API at `http://localhost:3000` or interactive docs at `http://localhost:3000/docs`.
+
+---
+
+### Running a Specific Assignment Version via Git Branches
+
+If you want to checkout and run a specific assignment version using its dedicated git branch:
+
+#### For Assignment 1 (In-Memory Version)
+1. Switch to the `Assignment-1` branch:
+   ```bash
+   git checkout Assignment-1
+   ```
+2. Navigate to the folder:
+   ```bash
+   cd "Assignment 1"
+   ```
+3. Install and start:
+   ```bash
+   npm install
+   npm start
+   ```
+
+#### For Assignment 2 (SQLite Database Version)
+1. Switch to the `main` or `assignment-2` branch:
+   ```bash
+   git checkout main
+   ```
+2. Navigate to the folder:
+   ```bash
+   cd "Assignment 1-2"
+   ```
+3. Install and start:
+   ```bash
+   npm install
+   npm start
+   ```
