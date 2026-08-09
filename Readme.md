@@ -22,3 +22,12 @@ This section details the migration of the storage layer from an in-memory JavaSc
 1. Open your terminal in the root folder:
    ```bash
    cd "Assignment 1-2"
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the server:
+   ```bash
+   npm start
+   ```
