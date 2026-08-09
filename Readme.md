@@ -6,26 +6,27 @@ This repository contains tasks and assignments completed during the FlyRank Inte
 
 | Folder | Project Name | Description | Tech Stack |
 | :--- | :--- | :--- | :--- |
-| [Assignment 1-2-3](./Assignment%201-2-3) | **Assignment 1: Task API (In-Memory)** | A lightweight in-memory CRUD API for managing a to-do list with interactive Swagger documentation. | Node.js, Express.js, Swagger UI |
-| [Assignment 1-2-3](./Assignment%201-2-3) | **Assignment 2: SQLite Migration** | Migrated the storage layer of the Task API to a local SQLite database file, maintaining identical endpoint behavior and schemas. | Node.js, Express.js, SQLite, Swagger UI |
-| [Assignment 1-2-3](./Assignment%201-2-3) | **Assignment 3: Postgres & Docker Compose** | Migrated storage to a PostgreSQL container, containerized the Node app, and orchestrated the stack using Docker Compose. | Node.js, Express.js, PostgreSQL (pg), Docker, Docker Compose, Swagger UI |
+| [Assignment 1-2-3-4](./Assignment%201-2-3-4) | **Assignment 1: Task API (In-Memory)** | A lightweight in-memory CRUD API for managing a to-do list with interactive Swagger documentation. | Node.js, Express.js, Swagger UI |
+| [Assignment 1-2-3-4](./Assignment%201-2-3-4) | **Assignment 2: SQLite Migration** | Migrated the storage layer of the Task API to a local SQLite database file, maintaining identical endpoint behavior and schemas. | Node.js, Express.js, SQLite, Swagger UI |
+| [Assignment 1-2-3-4](./Assignment%201-2-3-4) | **Assignment 3: Postgres & Docker Compose** | Migrated storage to a PostgreSQL container, containerized the Node app, and orchestrated the stack using Docker Compose. | Node.js, Express.js, PostgreSQL (pg), Docker, Docker Compose, Swagger UI |
+| [Assignment 1-2-3-4](./Assignment%201-2-3-4) | **Assignment 4: Supabase Authentication** | Integrated Supabase Auth as the Identity Provider, adding signup, login, logout, and protected route middlewares. | Node.js, Express.js, PostgreSQL, Supabase Auth, Docker, Swagger UI |
 
 ---
 
 ### How to Run Assignments
 
-The source code for the latest state of the assignments resides in the **`Assignment 1-2-3`** directory on the `main` branch (with Assignment 3 representing the fully dockerized Postgres version of the API).
+The source code for the latest state of the assignments resides in the **`Assignment 1-2-3-4`** directory on the `main` branch.
 
-#### To run via Docker Compose (Assignment 3 - Recommended)
-1. Open your terminal in the [Assignment 1-2-3](./Assignment%201-2-3) folder.
+#### To run via Docker Compose (Assignment 3 & 4)
+1. Open your terminal in the [Assignment 1-2-3-4](./Assignment%201-2-3-4) folder.
 2. Build and start both the API and database containers:
    ```bash
    docker compose up --build
    ```
 3. Access the API at `http://localhost:3000` or interactive docs at `http://localhost:3000/docs`.
 
-#### To run locally (with local Postgres instance)
-1. Copy `.env.example` to `.env` and configure your database URL.
+#### To run locally (with local Postgres instance and Supabase project)
+1. Copy `.env.example` to `.env` and configure your database URL and Supabase keys.
 2. Install dependencies:
    ```bash
    npm install
@@ -72,13 +73,27 @@ If you want to checkout and run a specific assignment version using its dedicate
    ```
 
 #### For Assignment 3 (Postgres & Docker Compose Version)
-1. Switch to the `main` (or `assignment-3`) branch:
+1. Switch to the `assignment-3` branch:
+   ```bash
+   git checkout assignment-3
+   ```
+2. Navigate to the folder:
+   ```bash
+   cd "Assignment 1-2-3"
+   ```
+3. Run using Docker Compose:
+   ```bash
+   docker compose up --build
+   ```
+
+#### For Assignment 4 (Supabase Authentication Version)
+1. Switch to the `main` (or `assignment-4`) branch:
    ```bash
    git checkout main
    ```
 2. Navigate to the folder:
    ```bash
-   cd "Assignment 1-2-3"
+   cd "Assignment 1-2-3-4"
    ```
 3. Run using Docker Compose:
    ```bash
