@@ -9,3 +9,12 @@ A simple, lightweight, and brutalist in-memory CRUD API for a to-do list applica
 1. Open your terminal in the root folder:
    ```bash
    cd "Assignment 1"
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the server:
+   ```bash
+   npm start
+   ```
