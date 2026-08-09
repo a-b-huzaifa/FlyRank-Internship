@@ -1,64 +1,42 @@
-# FlyRank Internship Tasks
-
-This repository contains tasks and assignments completed during the FlyRank Internship.
-
+# FlyRank Internship Tasks - Assignment 3
+This repository contains tasks and assignments completed during the FlyRank Internship up to Assignment 3.
 ## Assignments Index
-
-| Folder | Project Name | Description | Tech Stack |
-| :--- | :--- | :--- | :--- |
-| [Assignment 1-2](./Assignment%201-2) | **Assignment 1: Task API (In-Memory)** | A lightweight in-memory CRUD API for managing a to-do list with interactive Swagger documentation. | Node.js, Express.js, Swagger UI |
-| [Assignment 1-2](./Assignment%201-2) | **Assignment 2: SQLite Migration** | Migrated the storage layer of the Task API to a local SQLite database file, maintaining identical endpoint behavior and schemas. | Node.js, Express.js, SQLite (better-sqlite3), Swagger UI |
-
+* **Assignment 1: Task API (In-Memory)**: A lightweight in-memory CRUD API for managing a to-do list.
+* **Assignment 2: SQLite Migration**: Migrated the storage layer of the Task API to a SQLite database file.
+* **Assignment 3: Postgres & Docker Compose**: Migrated storage to a PostgreSQL container, containerized the Node app, and orchestrated the stack using Docker Compose.
 ---
-
-### How to Run Assignments
-
-The source code for both assignments resides in the **`Assignment 1-2`** directory on the `main` branch (with Assignment 2 representing the persistent database version of the API).
-
-To run the application:
-1. Open your terminal in the [Assignment 1-2](./Assignment%201-2) folder.
-2. Install dependencies:
+# Postgres & Docker Compose Migration - Assignment 3
+This section covers the migration from SQLite to PostgreSQL running in a Docker container, and how to orchestrate the entire stack.
+## Environment Variables (.env)
+- Before running locally or through Docker, configure your connection string in a `.env` file inside the `Assignment 1-2-3` folder:
+  ```bash
+  DATABASE_URL=postgres://postgres:dev@localhost:5432/tasks
+  ```
+# How to Run the Project
+## Option A: Run via Docker Compose (Recommended)
+1. Make sure Docker Desktop is running.
+2. Open your terminal in the Assignment 1-2-3 folder:
+   ```bash
+   cd "Assignment 1-2-3"
+   ```
+3. Build and start both the API and database containers
+   ```bash
+   docker compose up --build
+   ```
+## Option B: Run Locally
+1. Make sure you have a running PostgreSQL database instance on your machine.
+2. Open your terminal in the Assignment 1-2-3 folder:
+   ```bash
+   cd "Assignment 1-2-3"
+   ```
+3. cd "Assignment 1-2-3"
    ```bash
    npm install
    ```
-3. Start the server:
+4. Start the server:
    ```bash
    npm start
    ```
-4. Access the API at `http://localhost:3000` or interactive docs at `http://localhost:3000/docs`.
+5. Access the API at http://localhost:3000 or the interactive Swagger docs at http://localhost:3000/docs.
 
----
 
-### Running a Specific Assignment Version via Git Branches
-
-If you want to checkout and run a specific assignment version using its dedicated git branch:
-
-#### For Assignment 1 (In-Memory Version)
-1. Switch to the `Assignment-1` branch:
-   ```bash
-   git checkout Assignment-1
-   ```
-2. Navigate to the folder:
-   ```bash
-   cd "Assignment 1"
-   ```
-3. Install and start:
-   ```bash
-   npm install
-   npm start
-   ```
-
-#### For Assignment 2 (SQLite Database Version)
-1. Switch to the `main` or `assignment-2` branch:
-   ```bash
-   git checkout main
-   ```
-2. Navigate to the folder:
-   ```bash
-   cd "Assignment 1-2"
-   ```
-3. Install and start:
-   ```bash
-   npm install
-   npm start
-   ```
