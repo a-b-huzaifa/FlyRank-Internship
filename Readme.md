@@ -13,20 +13,23 @@ This repository contains tasks and assignments completed during the FlyRank Inte
 
 ---
 
-### How to Run Assignments
+## How to Run the Latest Version (Assignment 4)
 
 The source code for the latest state of the assignments resides in the **`Assignment 1-2-3-4`** directory on the `main` branch.
 
-#### To run via Docker Compose (Assignment 3 & 4)
-1. Open your terminal in the [Assignment 1-2-3-4](./Assignment%201-2-3-4) folder.
+### Option A: Run via Docker Compose
+1. Open your terminal in the `Assignment 1-2-3-4` folder:
+   ```bash
+   cd "Assignment 1-2-3-4"
+   ```
 2. Build and start both the API and database containers:
    ```bash
    docker compose up --build
    ```
 3. Access the API at `http://localhost:3000` or interactive docs at `http://localhost:3000/docs`.
 
-#### To run locally (with local Postgres instance and Supabase project)
-1. Copy `.env.example` to `.env` and configure your database URL and Supabase keys.
+### Option B: Run Locally
+1. Copy `.env.example` to `.env` inside the `Assignment 1-2-3-4` folder and configure your database URL and Supabase keys.
 2. Install dependencies:
    ```bash
    npm install
@@ -38,11 +41,11 @@ The source code for the latest state of the assignments resides in the **`Assign
 
 ---
 
-### Running a Specific Assignment Version via Git Branches
+## Running a Specific Assignment Version via Git Branches
 
 If you want to checkout and run a specific assignment version using its dedicated git branch:
 
-#### For Assignment 1 (In-Memory Version)
+### For Assignment 1 (In-Memory Version)
 1. Switch to the `Assignment-1` branch:
    ```bash
    git checkout Assignment-1
@@ -51,13 +54,16 @@ If you want to checkout and run a specific assignment version using its dedicate
    ```bash
    cd "Assignment 1"
    ```
-3. Install and start:
+3. Install dependencies:
    ```bash
    npm install
+   ```
+4. Start the server:
+   ```bash
    npm start
    ```
 
-#### For Assignment 2 (SQLite Database Version)
+### For Assignment 2 (SQLite Database Version)
 1. Switch to the `assignment-2` branch:
    ```bash
    git checkout assignment-2
@@ -66,13 +72,16 @@ If you want to checkout and run a specific assignment version using its dedicate
    ```bash
    cd "Assignment 1-2"
    ```
-3. Install and start:
+3. Install dependencies:
    ```bash
    npm install
+   ```
+4. Start the server:
+   ```bash
    npm start
    ```
 
-#### For Assignment 3 (Postgres & Docker Compose Version)
+### For Assignment 3 (Postgres & Docker Compose Version)
 1. Switch to the `assignment-3` branch:
    ```bash
    git checkout assignment-3
@@ -86,10 +95,10 @@ If you want to checkout and run a specific assignment version using its dedicate
    docker compose up --build
    ```
 
-#### For Assignment 4 (Supabase Authentication Version)
-1. Switch to the `main` (or `assignment-4`) branch:
+### For Assignment 4 (Supabase Authentication Version)
+1. Switch to the `assignment-4` branch:
    ```bash
-   git checkout main
+   git checkout assignment-4
    ```
 2. Navigate to the folder:
    ```bash
@@ -99,4 +108,3 @@ If you want to checkout and run a specific assignment version using its dedicate
    ```bash
    docker compose up --build
    ```
-
