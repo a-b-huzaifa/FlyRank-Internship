@@ -48,3 +48,12 @@ export function findJobByIdempotencyKey(key) {
 export function listPendingJobs() {
   return Array.from(jobsStore.values()).filter(job => job.status === "pending");
 }
+
+export function findNextPendingJob() {
+  for (const job of jobsStore.values()) {
+    if (job.status === "pending") {
+      return job;
+    }
+  }
+  return null;
+}
