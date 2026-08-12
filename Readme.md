@@ -11,6 +11,7 @@ This repository contains tasks and assignments completed during the FlyRank Inte
 | [Assignment 1-2-3-4](./Assignment%201-2-3-4) | **Assignment 3: Postgres & Docker Compose** | Migrated storage to a PostgreSQL container, containerized the Node app, and orchestrated the stack using Docker Compose. | Node.js, Express.js, PostgreSQL (pg), Docker, Docker Compose, Swagger UI |
 | [Assignment 1-2-3-4](./Assignment%201-2-3-4) | **Assignment 4: Supabase Authentication** | Integrated Supabase Auth as the Identity Provider, adding signup, login, logout, and protected route middlewares. | Node.js, Express.js, PostgreSQL, Supabase Auth, Docker, Swagger UI |
 | [Assignment 5](./Assignment%205) | **Assignment 5: Polite Web Scraper** | A standalone web scraper designed to crawl a book catalogue, extract details of all 60 books, validate data against a Zod schema, and implement rate-limiting and caching. | Node.js, Cheerio, Zod |
+| [Assignment 6](./Assignment%206) | **Assignment 6: Support Ticket Triage** | A support ticket triage classifier using LLM models to categorize tickets, validate output structures, retry failed schema attempts, log errors, and enforce rate switches. | Node.js, Express.js, Zod, OpenRouter (OpenAI SDK) |
 
 ---
 
@@ -38,6 +39,52 @@ The source code for the latest state of the API assignments resides in the **`As
 3. Start the server:
    ```bash
    npm start
+   ```
+
+---
+
+## How to Run the Web Scraper (Assignment 5)
+
+The source code for the scraper resides in the **`Assignment 5`** directory.
+
+1. Open your terminal in the `Assignment 5` folder:
+   ```bash
+   cd "Assignment 5"
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the scraper:
+   ```bash
+   npm start
+   ```
+
+---
+
+## How to Run the Ticket Triage API (Assignment 6)
+
+The source code for the ticket triage service resides in the **`Assignment 6`** directory.
+
+1. Open your terminal in the `Assignment 6` folder:
+   ```bash
+   cd "Assignment 6"
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Copy `.env.example` to `.env` and configure your OpenRouter API key:
+   ```bash
+   cp .env.example .env
+   ```
+4. Start the server:
+   ```bash
+   npm start
+   ```
+5. Run the evaluation suite:
+   ```bash
+   npm run eval
    ```
 
 ---
@@ -124,6 +171,28 @@ If you want to checkout and run a specific assignment version using its dedicate
    npm install
    ```
 4. Run the scraper:
+   ```bash
+   npm start
+   ```
+
+### For Assignment 6 (Support Ticket Triage Version)
+1. Switch to the `assignment-6` branch:
+   ```bash
+   git checkout assignment-6
+   ```
+2. Navigate to the folder:
+   ```bash
+   cd "Assignment 6"
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Copy `.env.example` to `.env` and configure your API keys:
+   ```bash
+   cp .env.example .env
+   ```
+5. Run the service:
    ```bash
    npm start
    ```
