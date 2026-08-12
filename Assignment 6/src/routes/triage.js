@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { z } from 'zod';
 import { triageResponseSchema } from '../llm/schema.js';
-import { client, LLM_MODEL } from '../llm/client.js';
+import { createChatCompletion } from '../llm/client.js';
 import { parseAndValidate } from '../llm/parse.js';
 
 const router = express.Router();
@@ -34,7 +34,7 @@ router.post('/triage', async (req, res) => {
     });
   }
 
-  // LLM Stub mode branch
+  // 1. LLM Stub mode branch
   if (process.env.LLM_STUB === '1') {
     const stubData = {
       category: "billing",
@@ -54,26 +54,31 @@ router.post('/triage', async (req, res) => {
     return res.status(200).json(schemaCheck.data);
   }
 
-  // Real LLM mode branch
-  try {
-    const response = await client.chat.completions.create({
-      model: LLM_MODEL,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: result.data.text }
-      ],
-      temperature: 0.2
+  // 2. Kill Switch (LLM_ENABLED) check
+  if (process.env.LLM_ENABLED === 'false') {
+    return res.status(200).json({
+      category: "other",
+      urgency: "normal",
+      suggested_team: "other",
+      confidence: 0,
+      reason: "AI triage is currently disabled"
     });
+  }
+
+  // 3. Real LLM mode branch
+  try {
+    const response = await createChatCompletion([
+      { role: "system", content: systemPrompt },
+      { role: "user", content: result.data.text }
+    ], 0.2, false);
 
     const rawOutput = response.choices[0].message.content;
 
-    // Parse and validate (runs exactly 1 repair internally if needed)
     const parseResult = await parseAndValidate(rawOutput, systemPrompt, result.data.text);
     if (parseResult.success) {
       return res.status(200).json(parseResult.data);
     }
 
-    // Capture failures to quarantine logs and return 422
     const logDir = path.join(__dirname, '../../logs');
     if (!fs.existsSync(logDir)) {
       fs.mkdirSync(logDir, { recursive: true });
@@ -94,6 +99,14 @@ router.post('/triage', async (req, res) => {
     });
 
   } catch (err) {
+    // Return 504 on request timeout
+    const isTimeout = err.name === 'APIConnectionTimeoutError' || err.message?.toLowerCase().includes('timeout');
+    if (isTimeout) {
+      return res.status(504).json({
+        error: "Model request timed out"
+      });
+    }
+
     console.error("LLM execution error:", err);
     return res.status(500).json({
       error: `LLM request failed: ${err.message}`
