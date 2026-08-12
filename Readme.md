@@ -12,10 +12,12 @@ This repository contains tasks and assignments completed during the FlyRank Inte
 | [Assignment 1-2-3-4](./Assignment%201-2-3-4) | **Assignment 4: Supabase Authentication** | Integrated Supabase Auth as the Identity Provider, adding signup, login, logout, and protected route middlewares. | Node.js, Express.js, PostgreSQL, Supabase Auth, Docker, Swagger UI |
 | [Assignment 5](./Assignment%205) | **Assignment 5: Polite Web Scraper** | A standalone web scraper designed to crawl a book catalogue, extract details of all 60 books, validate data against a Zod schema, and implement rate-limiting and caching. | Node.js, Cheerio, Zod |
 | [Assignment 6](./Assignment%206) | **Assignment 6: Support Ticket Triage** | A support ticket triage classifier using LLM models to categorize tickets, validate output structures, retry failed schema attempts, log errors, and enforce rate switches. | Node.js, Express.js, Zod, OpenRouter (OpenAI SDK) |
+| [Assignment 7](./Assignment%207) | **Assignment 7: Support Ticket Triage Queue** | An asynchronous, background-worker support ticket triage queue system implementing idempotency keys, polling statuses, and failure retries. | Node.js, Express.js, Zod, OpenRouter (OpenAI SDK) |
 
 ---
 
-## How to Run the Latest Version of the Task API (Assignment 4)
+## How to Run the 
+Task API (Assignment 4)
 
 The source code for the latest state of the API assignments resides in the **`Assignment 1-2-3-4`** directory on the `main` branch.
 
@@ -85,6 +87,29 @@ The source code for the ticket triage service resides in the **`Assignment 6`** 
 5. Run the evaluation suite:
    ```bash
    npm run eval
+   ```
+
+---
+
+## How to Run the Ticket Triage Queue API (Assignment 7)
+
+The source code for the asynchronous ticket triage queue service resides in the **`Assignment 7`** directory.
+
+1. Open your terminal in the `Assignment 7` folder:
+   ```bash
+   cd "Assignment 7"
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Copy `.env.example` to `.env` and configure your OpenRouter API key:
+   ```bash
+   cp .env.example .env
+   ```
+4. Start the server and background worker:
+   ```bash
+   npm start
    ```
 
 ---
@@ -183,6 +208,28 @@ If you want to checkout and run a specific assignment version using its dedicate
 2. Navigate to the folder:
    ```bash
    cd "Assignment 6"
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Copy `.env.example` to `.env` and configure your API keys:
+   ```bash
+   cp .env.example .env
+   ```
+5. Run the service:
+   ```bash
+   npm start
+   ```
+
+### For Assignment 7 (Support Ticket Triage Queue Version)
+1. Switch to the `assignment-7` branch:
+   ```bash
+   git checkout assignment-7
+   ```
+2. Navigate to the folder:
+   ```bash
+   cd "Assignment 7"
    ```
 3. Install dependencies:
    ```bash
