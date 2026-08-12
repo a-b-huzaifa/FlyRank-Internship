@@ -5,13 +5,13 @@ import { fileURLToPath } from 'url';
 import { z } from 'zod';
 import { triageResponseSchema } from '../llm/schema.js';
 import { client, LLM_MODEL } from '../llm/client.js';
+import { parseAndValidate } from '../llm/parse.js';
 
 const router = express.Router();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load the versioned system prompt once on startup
 const promptPath = path.join(__dirname, '../../prompts/triage-v1.md');
 const systemPrompt = fs.readFileSync(promptPath, 'utf8');
 
@@ -54,7 +54,7 @@ router.post('/triage', async (req, res) => {
     return res.status(200).json(schemaCheck.data);
   }
 
-  // Real LLM mode branch (Stage 2)
+  // Real LLM mode branch
   try {
     const response = await client.chat.completions.create({
       model: LLM_MODEL,
@@ -66,9 +66,33 @@ router.post('/triage', async (req, res) => {
     });
 
     const rawOutput = response.choices[0].message.content;
-    return res.status(200).json({
-      raw_model_output: rawOutput
+
+    // Parse and validate (runs exactly 1 repair internally if needed)
+    const parseResult = await parseAndValidate(rawOutput, systemPrompt, result.data.text);
+    if (parseResult.success) {
+      return res.status(200).json(parseResult.data);
+    }
+
+    // Capture failures to quarantine logs and return 422
+    const logDir = path.join(__dirname, '../../logs');
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true });
+    }
+
+    const quarantineEntry = JSON.stringify({
+      timestamp: new Date().toISOString(),
+      original_input: result.data.text,
+      raw_output: rawOutput,
+      validation_error: parseResult.error,
+      prompt_version: "triage-v1"
+    }) + '\n';
+
+    fs.appendFileSync(path.join(logDir, 'quarantine.jsonl'), quarantineEntry, 'utf8');
+
+    return res.status(422).json({
+      error: "Model output could not be validated after repair attempt"
     });
+
   } catch (err) {
     console.error("LLM execution error:", err);
     return res.status(500).json({
