@@ -1,8 +1,19 @@
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { z } from 'zod';
 import { triageResponseSchema } from '../llm/schema.js';
+import { client, LLM_MODEL } from '../llm/client.js';
 
 const router = express.Router();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load the versioned system prompt once on startup
+const promptPath = path.join(__dirname, '../../prompts/triage-v1.md');
+const systemPrompt = fs.readFileSync(promptPath, 'utf8');
 
 const triageInputSchema = z.object({
   text: z.string({
@@ -13,7 +24,7 @@ const triageInputSchema = z.object({
   .max(2000, "field 'text' must not exceed 2000 characters")
 });
 
-router.post('/triage', (req, res) => {
+router.post('/triage', async (req, res) => {
   const result = triageInputSchema.safeParse(req.body);
   if (!result.success) {
     const firstIssue = result.error.issues[0];
@@ -23,6 +34,7 @@ router.post('/triage', (req, res) => {
     });
   }
 
+  // LLM Stub mode branch
   if (process.env.LLM_STUB === '1') {
     const stubData = {
       category: "billing",
@@ -42,9 +54,27 @@ router.post('/triage', (req, res) => {
     return res.status(200).json(schemaCheck.data);
   }
 
-  return res.status(501).json({
-    error: "Not implemented yet"
-  });
+  // Real LLM mode branch (Stage 2)
+  try {
+    const response = await client.chat.completions.create({
+      model: LLM_MODEL,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: result.data.text }
+      ],
+      temperature: 0.2
+    });
+
+    const rawOutput = response.choices[0].message.content;
+    return res.status(200).json({
+      raw_model_output: rawOutput
+    });
+  } catch (err) {
+    console.error("LLM execution error:", err);
+    return res.status(500).json({
+      error: `LLM request failed: ${err.message}`
+    });
+  }
 });
 
 export default router;
