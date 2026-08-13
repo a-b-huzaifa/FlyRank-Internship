@@ -1,14 +1,30 @@
 import React, { useState } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
 
+type ExecutionState = 'idle' | 'running' | 'yes' | 'no' | 'failed';
+
 interface DecisionNodeData {
   prompt: string;
   onPromptChange: (id: string, text: string) => void;
+  executionState?: ExecutionState;
+  errorMessage?: string;
 }
+
+const stateStyles: Record<ExecutionState, string> = {
+  idle: 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950',
+  running:
+    'border-blue-500 dark:border-blue-400 ring-2 ring-blue-200 dark:ring-blue-900 bg-blue-50/40 dark:bg-blue-950/30 node-pulse',
+  yes: 'border-green-500 dark:border-green-400 bg-green-50/30 dark:bg-green-950/20',
+  no: 'border-red-400 dark:border-red-500 bg-red-50/30 dark:bg-red-950/20',
+  failed:
+    'border-dashed border-red-500 dark:border-red-400 bg-red-50/30 dark:bg-red-950/20',
+};
 
 export default function DecisionNode({ id, data }: NodeProps<DecisionNodeData>) {
   const [isEditing, setIsEditing] = useState(false);
   const [prompt, setPrompt] = useState(data.prompt || '');
+
+  const execState: ExecutionState = data.executionState || 'idle';
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -17,7 +33,23 @@ export default function DecisionNode({ id, data }: NodeProps<DecisionNodeData>) 
   };
 
   return (
-    <div className="relative bg-white dark:bg-zinc-950 text-foreground rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-md w-[280px] p-4 font-sans hover:shadow-lg transition-shadow">
+    <div
+      className={`relative text-foreground rounded-xl border shadow-md w-[280px] p-4 font-sans hover:shadow-lg transition-all duration-300 ${stateStyles[execState]}`}
+    >
+      {/* Failed badge */}
+      {execState === 'failed' && (
+        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 z-10">
+          <span className="text-[9px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-red-500 text-white shadow-sm border border-red-600">
+            ⚠️ Error
+          </span>
+        </div>
+      )}
+
+      {/* Running indicator dot */}
+      {execState === 'running' && (
+        <div className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 rounded-full bg-blue-500 shadow-md shadow-blue-500/40 animate-ping" />
+      )}
+
       {/* Target input handle on the left (for incoming flows) */}
       <Handle
         type="target"
@@ -33,8 +65,11 @@ export default function DecisionNode({ id, data }: NodeProps<DecisionNodeData>) 
       />
 
       <div className="flex flex-col gap-2">
-        <div className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
+        <div className="text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">
           AI Decision Node
+          {execState === 'running' && (
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+          )}
         </div>
 
         {isEditing ? (
@@ -65,6 +100,13 @@ export default function DecisionNode({ id, data }: NodeProps<DecisionNodeData>) 
             className="text-sm text-foreground bg-zinc-50 dark:bg-zinc-900/50 p-3 rounded-md cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors break-words min-h-[50px] flex items-center justify-center text-center font-medium border border-dashed border-zinc-200 dark:border-zinc-800"
           >
             {prompt || <span className="text-zinc-400 dark:text-zinc-500 italic">Click to edit prompt...</span>}
+          </div>
+        )}
+
+        {/* Error message below prompt */}
+        {execState === 'failed' && data.errorMessage && (
+          <div className="text-[10px] text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded px-2 py-1 truncate">
+            {data.errorMessage}
           </div>
         )}
       </div>

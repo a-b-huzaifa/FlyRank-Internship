@@ -31,6 +31,7 @@ interface RunRecord {
   status: 'pending' | 'running' | 'completed' | 'failed';
   trace: TraceStep[];
   error?: string | null;
+  activeNodeId?: string | null;
 }
 
 // Register custom node and edge types
@@ -139,6 +140,45 @@ export default function FlowEditorPage() {
     return () => clearInterval(intervalId);
   }, [activeRunId, isRunning]);
 
+  // ─── Derive execution state for each node ─────────────────────────
+  const nodesWithExecutionState = useMemo(() => {
+    return nodes.map((node) => {
+      // Default: no execution state overlay
+      let executionState: 'idle' | 'running' | 'yes' | 'no' | 'failed' = 'idle';
+      let nodeErrorMessage: string | undefined;
+
+      if (runResult) {
+        // Is this node the one actively being processed?
+        if (runResult.activeNodeId === node.id && runResult.status === 'running') {
+          executionState = 'running';
+        } else {
+          // Check the trace for a completed step on this node
+          const traceStep = runResult.trace.find((s) => s.node_id === node.id);
+          if (traceStep) {
+            if (traceStep.answer === 'YES') {
+              executionState = 'yes';
+            } else if (traceStep.answer === 'NO') {
+              executionState = 'no';
+            } else if (traceStep.answer === 'FAILED') {
+              executionState = 'failed';
+              nodeErrorMessage = runResult.error || 'Execution failed';
+            }
+          }
+        }
+      }
+
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          onPromptChange: handlePromptChange,
+          executionState,
+          errorMessage: nodeErrorMessage,
+        },
+      };
+    });
+  }, [nodes, runResult, handlePromptChange]);
+
   // Handle new edge drag connections
   const onConnect = useCallback(
     (params: Connection) => {
@@ -246,6 +286,22 @@ export default function FlowEditorPage() {
     }
   }, [nodes, edges]);
 
+  // ─── MiniMap node color based on execution state ───────────────────
+  const miniMapNodeColor = useCallback(
+    (node: Node) => {
+      if (!runResult) return '#e4e4e7';
+      if (runResult.activeNodeId === node.id) return '#3b82f6'; // blue for running
+      const step = runResult.trace.find((s) => s.node_id === node.id);
+      if (step) {
+        if (step.answer === 'YES') return '#22c55e';
+        if (step.answer === 'NO') return '#ef4444';
+        if (step.answer === 'FAILED') return '#f97316';
+      }
+      return '#e4e4e7';
+    },
+    [runResult]
+  );
+
   return (
     <div className="w-screen h-screen flex flex-col bg-zinc-50 dark:bg-zinc-950 font-sans">
       {/* Header bar */}
@@ -254,7 +310,7 @@ export default function FlowEditorPage() {
           <h1 className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
             <span>FlowEditor</span>
             <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800">
-              Phase 3
+              Phase 4
             </span>
           </h1>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
@@ -293,7 +349,7 @@ export default function FlowEditorPage() {
         {/* React Flow Editor */}
         <div className="flex-1 h-full relative">
           <ReactFlow
-            nodes={nodes}
+            nodes={nodesWithExecutionState}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
@@ -313,10 +369,7 @@ export default function FlowEditorPage() {
             <MiniMap
               className="!bg-white dark:!bg-zinc-900 !border-zinc-200 dark:!border-zinc-800 !shadow-md rounded-lg overflow-hidden"
               maskColor="rgba(0, 0, 0, 0.05)"
-              nodeColor={(node) => {
-                if (node.type === 'decisionNode') return '#e4e4e7';
-                return '#f4f4f5';
-              }}
+              nodeColor={miniMapNodeColor}
             />
             
             {/* Quick Help Guide Panel */}
@@ -328,9 +381,10 @@ export default function FlowEditorPage() {
           </ReactFlow>
         </div>
 
-        {/* Temporary Raw Execution Trace panel */}
+        {/* ─── Execution Logs Panel ──────────────────────────────────── */}
         {(runResult || errorMessage || isRunning) && (
           <div className="w-[380px] h-full border-l border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 flex flex-col z-10 shadow-lg">
+            {/* Panel header */}
             <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 flex justify-between items-center bg-zinc-50 dark:bg-zinc-900/50">
               <div className="flex flex-col">
                 <h3 className="font-bold text-sm text-zinc-900 dark:text-zinc-50">Workflow Execution</h3>
@@ -346,11 +400,18 @@ export default function FlowEditorPage() {
               </span>
             </div>
 
-            {/* Error Message banner */}
-            {(errorMessage || runResult?.error) && (
-              <div className="m-4 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-lg text-xs text-red-600 dark:text-red-400">
-                <strong className="font-semibold block mb-0.5">Execution Failure:</strong>
-                {errorMessage || runResult?.error}
+            {/* Error alert banner */}
+            {(runResult?.status === 'failed' || errorMessage) && (
+              <div className="mx-4 mt-4 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded-lg flex flex-col gap-1">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-red-500 text-sm">⚠️</span>
+                  <span className="text-xs font-bold text-red-700 dark:text-red-400">
+                    Workflow Execution Failed
+                  </span>
+                </div>
+                <p className="text-[11px] text-red-600 dark:text-red-400 leading-snug">
+                  {errorMessage || runResult?.error || 'An unknown error occurred during execution.'}
+                </p>
               </div>
             )}
 
@@ -369,7 +430,15 @@ export default function FlowEditorPage() {
               <ul className="space-y-3">
                 {runResult?.trace.map((step, idx) => (
                   <li key={idx} className="p-3 border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/30 rounded-lg flex flex-col gap-2 relative overflow-hidden">
-                    <div className="flex justify-between items-start gap-2">
+                    {/* Colored left accent stripe */}
+                    <div className={`absolute left-0 top-0 bottom-0 w-[3px] rounded-l-lg ${
+                      step.answer === 'YES' ? 'bg-green-500' :
+                      step.answer === 'NO' ? 'bg-red-500' :
+                      step.answer === 'FAILED' ? 'bg-orange-500' :
+                      'bg-zinc-300'
+                    }`} />
+
+                    <div className="flex justify-between items-start gap-2 pl-2">
                       <div className="flex items-center gap-1.5">
                         <span className="text-[9px] font-mono bg-zinc-200 dark:bg-zinc-800 px-1 py-0.2 rounded text-zinc-500 dark:text-zinc-400">
                           {step.node_id}
@@ -382,14 +451,15 @@ export default function FlowEditorPage() {
                       <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded shadow-sm border ${
                         step.answer === 'YES' ? 'bg-green-500 text-white border-green-600' :
                         step.answer === 'NO' ? 'bg-red-500 text-white border-red-600' :
+                        step.answer === 'FAILED' ? 'bg-orange-500 text-white border-orange-600' :
                         'bg-zinc-500 text-white border-zinc-600'
                       }`}>
                         {step.answer}
                       </span>
                     </div>
 
-                    <p className="text-xs text-zinc-700 dark:text-zinc-300 font-medium">
-                      "{step.prompt}"
+                    <p className="text-xs text-zinc-700 dark:text-zinc-300 font-medium pl-2">
+                      &ldquo;{step.prompt}&rdquo;
                     </p>
                     
                     <span className="text-[9px] text-zinc-400 self-end">
@@ -399,6 +469,17 @@ export default function FlowEditorPage() {
                 ))}
               </ul>
             </div>
+
+            {/* Panel footer with node count summary */}
+            {runResult && runResult.trace.length > 0 && (
+              <div className="p-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 flex items-center justify-between text-[10px] text-zinc-500">
+                <span>{runResult.trace.length} node{runResult.trace.length !== 1 ? 's' : ''} traversed</span>
+                <span>
+                  {runResult.trace.filter((s) => s.answer === 'YES').length} YES · {runResult.trace.filter((s) => s.answer === 'NO').length} NO
+                  {runResult.trace.some((s) => s.answer === 'FAILED') && ` · ${runResult.trace.filter((s) => s.answer === 'FAILED').length} FAILED`}
+                </span>
+              </div>
+            )}
           </div>
         )}
       </div>

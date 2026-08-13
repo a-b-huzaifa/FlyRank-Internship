@@ -9,6 +9,7 @@ export interface RunRecord {
   status: 'pending' | 'running' | 'completed' | 'failed';
   trace: TraceStep[];
   error?: string | null;
+  activeNodeId?: string | null;
 }
 
 // Global variable to keep the Map reference during next.js hot reloads in dev mode
