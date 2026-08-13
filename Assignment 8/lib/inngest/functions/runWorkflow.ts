@@ -80,7 +80,7 @@ export const runWorkflow = inngest.createFunction(
             };
           }
         }
-      );
+      ) as { success: boolean; answer?: string; error?: string };
 
       if (!stepResult.success) {
         status = 'failed';
