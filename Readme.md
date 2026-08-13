@@ -13,6 +13,7 @@ This repository contains tasks and assignments completed during the FlyRank Inte
 | [Assignment 5](./Assignment%205) | **Assignment 5: Polite Web Scraper** | A standalone web scraper designed to crawl a book catalogue, extract details of all 60 books, validate data against a Zod schema, and implement rate-limiting and caching. | Node.js, Cheerio, Zod |
 | [Assignment 6](./Assignment%206) | **Assignment 6: Support Ticket Triage** | A support ticket triage classifier using LLM models to categorize tickets, validate output structures, retry failed schema attempts, log errors, and enforce rate switches. | Node.js, Express.js, Zod, OpenRouter (OpenAI SDK) |
 | [Assignment 7](./Assignment%207) | **Assignment 7: Support Ticket Triage Queue** | An asynchronous, background-worker support ticket triage queue system implementing idempotency keys, polling statuses, and failure retries. | Node.js, Express.js, Zod, OpenRouter (OpenAI SDK) |
+| [Assignment 8](./Assignment%208) | **Assignment 8: Visual AI Workflow Editor** | An interactive canvas-based visual workflow editor with drag-and-drop decision nodes, YES/NO typed edges, Inngest-powered graph traversal calling a real LLM at each node, real-time execution state highlighting, and a polished execution logs panel. | Next.js, React Flow, Inngest, OpenRouter (OpenAI SDK), Tailwind CSS v4, Shadcn UI |
 
 ---
 
@@ -111,6 +112,38 @@ The source code for the asynchronous ticket triage queue service resides in the 
    ```bash
    npm start
    ```
+
+---
+
+## How to Run the Visual AI Workflow Editor (Assignment 8)
+
+The source code for the visual workflow editor resides in the **`Assignment 8`** directory.
+
+1. Open your terminal in the `Assignment 8` folder:
+   ```bash
+   cd "Assignment 8"
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env.local` file with the following variables:
+   ```env
+   OPENAI_BASE_URL=https://openrouter.ai/api/v1
+   OPENAI_API_KEY=your-openrouter-key-here
+   OPENAI_MODEL=openrouter/free
+   INNGEST_EVENT_KEY=local
+   INNGEST_DEV=1
+   ```
+4. Start the Next.js development server:
+   ```bash
+   npm run dev
+   ```
+5. In a separate terminal, start the Inngest Dev Server:
+   ```bash
+   npx inngest-cli@latest dev
+   ```
+6. Open `http://localhost:3000` to use the flow editor canvas.
 
 ---
 
@@ -242,4 +275,27 @@ If you want to checkout and run a specific assignment version using its dedicate
 5. Run the service:
    ```bash
    npm start
+   ```
+
+### For Assignment 8 (Visual AI Workflow Editor)
+1. Switch to the `assignment-8` branch:
+   ```bash
+   git checkout assignment-8
+   ```
+2. Navigate to the folder:
+   ```bash
+   cd "Assignment 8"
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Create a `.env.local` file with your OpenRouter API key and Inngest config (see above).
+5. Start the Next.js dev server:
+   ```bash
+   npm run dev
+   ```
+6. In a separate terminal, start the Inngest Dev Server:
+   ```bash
+   npx inngest-cli@latest dev
    ```
