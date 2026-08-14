@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import generateReportRouter from './routes/generateReport.js';
+import { startWorker } from './jobs/worker.js';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.get('/health', (req, res) => {
 if (process.env.NODE_ENV !== 'test') {
   app.listen(PORT, () => {
     console.log(`[Server] Assignment 9 server listening on port ${PORT}`);
+    startWorker();
   });
 }
 
