@@ -14,11 +14,11 @@ This repository contains tasks and assignments completed during the FlyRank Inte
 | [Assignment 6](./Assignment%206) | **Assignment 6: Support Ticket Triage** | A support ticket triage classifier using LLM models to categorize tickets, validate output structures, retry failed schema attempts, log errors, and enforce rate switches. | Node.js, Express.js, Zod, OpenRouter (OpenAI SDK) |
 | [Assignment 7](./Assignment%207) | **Assignment 7: Support Ticket Triage Queue** | An asynchronous, background-worker support ticket triage queue system implementing idempotency keys, polling statuses, and failure retries. | Node.js, Express.js, Zod, OpenRouter (OpenAI SDK) |
 | [Assignment 8](./Assignment%208) | **Assignment 8: Visual AI Workflow Editor** | An interactive canvas-based visual workflow editor with drag-and-drop decision nodes, YES/NO typed edges, Inngest-powered graph traversal calling a real LLM at each node, real-time execution state highlighting, and a polished execution logs panel. | Next.js, React Flow, Inngest, OpenRouter (OpenAI SDK), Tailwind CSS v4, Shadcn UI |
+| [Assignment 9](./Assignment%209) | **Assignment 9: Task Summary PDF Report Generator** | An asynchronous background-job service for generating and downloading aggregated task metrics PDF reports from PostgreSQL, featuring fast 202 acceptance, same-day idempotency, and clean artifact-linking. | Node.js, Express.js, PostgreSQL (pg), PDFKit |
 
 ---
 
-## How to Run the 
-Task API (Assignment 4)
+## How to Run the Task API (Assignment 4)
 
 The source code for the latest state of the API assignments resides in the **`Assignment 1-2-3-4`** directory on the `main` branch.
 
@@ -144,6 +144,40 @@ The source code for the visual workflow editor resides in the **`Assignment 8`**
    npx inngest-cli@latest dev
    ```
 6. Open `http://localhost:3000` to use the flow editor canvas.
+
+---
+
+## How to Run the Task Summary PDF Report Generator (Assignment 9)
+
+The source code for the report generator resides in the **`Assignment 9`** directory.
+
+1. Open your terminal in the `Assignment 9` folder:
+   ```bash
+   cd "Assignment 9"
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Configure your `.env` file:
+   ```env
+   DATABASE_URL=postgres://postgres:dev@localhost:5433/tasks
+   PORT=3000
+   OUTPUT_DIR=./outputs
+   ```
+4. Start the server and background worker:
+   ```bash
+   npm start
+   ```
+5. Submit a report generation request:
+   ```bash
+   curl -X POST http://localhost:3000/reports/tasks-summary
+   ```
+6. Check job status and download the rendered PDF:
+   ```bash
+   curl http://localhost:3000/jobs/<job_id>
+   curl -o report.pdf http://localhost:3000/reports/download/<job_id>
+   ```
 
 ---
 
@@ -298,4 +332,22 @@ If you want to checkout and run a specific assignment version using its dedicate
 6. In a separate terminal, start the Inngest Dev Server:
    ```bash
    npx inngest-cli@latest dev
+   ```
+
+### For Assignment 9 (Task Summary PDF Report Generator)
+1. Switch to the `assignment-9` branch:
+   ```bash
+   git checkout assignment-9
+   ```
+2. Navigate to the folder:
+   ```bash
+   cd "Assignment 9"
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Configure `.env` and start the service:
+   ```bash
+   npm start
    ```
