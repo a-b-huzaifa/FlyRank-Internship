@@ -2,18 +2,19 @@ import { randomUUID } from 'crypto';
 
 const jobsStore = new Map();
 
-export function createJob({ text, idempotency_key }) {
+export function createJob({ text = '', type = 'tasks-summary-report', idempotency_key } = {}) {
   const now = new Date().toISOString();
   const job = {
     id: randomUUID(),
-    status: "pending",
+    type: type || 'tasks-summary-report',
+    status: 'pending',
     input: { text },
     result: null,
     error: null,
     attempts: 0,
     idempotency_key,
     created_at: now,
-    updated_at: now
+    updated_at: now,
   };
   jobsStore.set(job.id, job);
   return job;
@@ -30,7 +31,7 @@ export function updateJob(id, changes) {
   const updated = {
     ...job,
     ...changes,
-    updated_at: new Date().toISOString()
+    updated_at: new Date().toISOString(),
   };
   jobsStore.set(id, updated);
   return updated;
@@ -46,12 +47,12 @@ export function findJobByIdempotencyKey(key) {
 }
 
 export function listPendingJobs() {
-  return Array.from(jobsStore.values()).filter(job => job.status === "pending");
+  return Array.from(jobsStore.values()).filter(job => job.status === 'pending');
 }
 
 export function findNextPendingJob() {
   for (const job of jobsStore.values()) {
-    if (job.status === "pending") {
+    if (job.status === 'pending') {
       return job;
     }
   }
