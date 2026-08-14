@@ -1,6 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import generateReportRouter from './routes/generateReport.js';
+import statusRouter from './routes/status.js';
+import downloadReportRouter from './routes/downloadReport.js';
 import { startWorker } from './jobs/worker.js';
 
 dotenv.config();
@@ -10,8 +12,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Mount report generation route
+// Mount application routes
 app.use('/', generateReportRouter);
+app.use('/', statusRouter);
+app.use('/', downloadReportRouter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
